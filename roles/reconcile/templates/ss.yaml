@@ -134,7 +134,7 @@ spec:
                 etcdctl $(if [ ${SECURE_CLIENT+x} ]; then echo "--cert=/etc/etcdtls/operator/etcd-tls/etcd-client.crt --key=/etc/etcdtls/operator/etcd-tls/etcd-client.key --cacert=/etc/etcdtls/operator/etcd-tls/etcd-client-ca.crt"; fi) member remove ${MEMBER_HASH}
             fi
             echo "Adding new member"
-            etcdctl $(if [ ${SECURE_CLIENT+x} ]; then echo "--cert=/etc/etcdtls/operator/etcd-tls/etcd-client.crt --key=/etc/etcdtls/operator/etcd-tls/etcd-client.key --cacert=/etc/etcdtls/operator/etcd-tls/etcd-client-ca.crt"; fi) member add ${HOSTNAME} http$(if [ ${SECURE_PEER+x} ]; then echo "s"; fi)://${HOSTNAME}.${CLUSTER_NAME}.{{ etcd_namespace }}.svc.cluster.local:2380 | grep "^ETCD_" > /var/run/etcd/new_member_envs
+            etcdctl $(if [ ${SECURE_CLIENT+x} ]; then echo "--cert=/etc/etcdtls/operator/etcd-tls/etcd-client.crt --key=/etc/etcdtls/operator/etcd-tls/etcd-client.key --cacert=/etc/etcdtls/operator/etcd-tls/etcd-client-ca.crt"; fi) member add ${HOSTNAME} --peer-urls http$(if [ ${SECURE_PEER+x} ]; then echo "s"; fi)://${HOSTNAME}.${CLUSTER_NAME}.{{ etcd_namespace }}.svc.cluster.local:2380 | grep "^ETCD_" > /var/run/etcd/new_member_envs
             if [ $? -ne 0 ]; then
                 echo "Exiting"
                 rm -f /var/run/etcd/new_member_envs

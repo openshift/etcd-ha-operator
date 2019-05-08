@@ -1,4 +1,4 @@
-apiVersion: "etcd.database.coreos.com/v1beta2"
+apiVersion: "etcd.database.coreos.com/v1beta3"
 kind: "EtcdRestore"
 metadata:
   # The restore CR name must be the same as spec.etcdCluster.name

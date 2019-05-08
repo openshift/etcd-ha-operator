@@ -12,7 +12,7 @@
   - name: lookup for status
     set_fact:
       cr: "{{ q('k8s',
-                  api_version='etcd.database.coreos.com/v1beta2',
+                  api_version='etcd.database.coreos.com/v1beta3',
                   kind='EtcdRestore',
                   namespace=meta.namespace,
                   resource_name=meta.name)
@@ -25,7 +25,7 @@
 
   - name: Update etcdrestore cr status to Restoring
     k8s_status:
-      api_version: "etcd.database.coreos.com/v1beta2"
+      api_version: "etcd.database.coreos.com/v1beta3"
       kind: "EtcdRestore"
       name: "{{ meta.name }}"
       namespace: "{{ meta.namespace }}"
@@ -48,7 +48,7 @@
   - name: Get EtcdCluster cr and save the spec
     set_fact:
       cluster_spec: "{{ q('k8s',
-                                api_version='etcd.database.coreos.com/v1beta2',
+                                api_version='etcd.database.coreos.com/v1beta3',
                                 kind='EtcdCluster',
                                 namespace=meta.namespace,
                                 resource_name=meta.name)
@@ -78,7 +78,7 @@
   - block:
     - name: Set status when EtcdCluster cr not found
       k8s_status:
-        api_version: "etcd.database.coreos.com/v1beta2"
+        api_version: "etcd.database.coreos.com/v1beta3"
         kind: "EtcdRestore"
         name: "{{ meta.name }}"
         namespace: "{{ meta.namespace }}"
@@ -95,7 +95,7 @@
     k8s:
       state: present
       definition:
-        apiVersion: "etcd.database.coreos.com/v1beta2"
+        apiVersion: "etcd.database.coreos.com/v1beta3"
         kind: "EtcdCluster"
         metadata:
           name: "{{ meta.name }}"
@@ -107,7 +107,7 @@
   - name: Wait for EtcdCluster Operator to relinquish control
     k8s_facts:
       kind: EtcdCluster
-      api_version: etcd.database.coreos.com/v1beta2
+      api_version: etcd.database.coreos.com/v1beta3
       namespace: "{{ meta.namespace }}"
       name: "{{ meta.name }}"
     register: etcd_cr
@@ -219,7 +219,7 @@
               etcd_cluster: "{{ meta.name }}"
               app: "etcd"
           spec:
-            serviceAccountName: "etcd-ansible-operator"
+            serviceAccountName: "etcd-ha-operator"
             initContainers: "{{ init_containers }}"
             hostname: "{{ pod_name }}"
             subdomain: "{{ meta.name }}"
@@ -298,7 +298,7 @@
               etcd_cluster: "{{ meta.name }}"
               app: "etcd"
           spec:
-            serviceAccountName: "etcd-ansible-operator"
+            serviceAccountName: "etcd-ha-operator"
             initContainers: "{{ init_containers }}"
             hostname: "{{ pod_name }}"
             subdomain: "{{ meta.name }}"
@@ -363,7 +363,7 @@
     k8s:
       state: present
       definition:
-        apiVersion: "etcd.database.coreos.com/v1beta2"
+        apiVersion: "etcd.database.coreos.com/v1beta3"
         kind: "EtcdCluster"
         metadata:
           name: "{{ meta.name }}"
@@ -374,7 +374,7 @@
   - name: Wait for cluster to be available
     k8s_facts:
       kind: EtcdCluster
-      api_version: etcd.database.coreos.com/v1beta2
+      api_version: etcd.database.coreos.com/v1beta3
       namespace: "{{ meta.namespace }}"
       name: "{{ meta.name }}"
     register: sts
@@ -385,7 +385,7 @@
 
   - name: Update etcdrestore cr status to Failed
     k8s_status:
-      api_version: "etcd.database.coreos.com/v1beta2"
+      api_version: "etcd.database.coreos.com/v1beta3"
       kind: "EtcdRestore"
       name: "{{ meta.name }}"
       namespace: "{{ meta.namespace }}"
@@ -396,7 +396,7 @@
 
   - name: Update etcdrestore cr status to Complete
     k8s_status:
-      api_version: "etcd.database.coreos.com/v1beta2"
+      api_version: "etcd.database.coreos.com/v1beta3"
       kind: "EtcdRestore"
       name: "{{ meta.name }}"
       namespace: "{{ meta.namespace }}"

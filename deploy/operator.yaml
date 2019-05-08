@@ -1,31 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: etcd-ansible-operator
+  name: etcd-ha-operator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: etcd-ansible-operator
+      name: etcd-ha-operator
   template:
     metadata:
       labels:
-        name: etcd-ansible-operator
+        name: etcd-ha-operator
     spec:
-      serviceAccountName: etcd-ansible-operator
+      serviceAccountName: etcd-ha-operator
       containers:
         - name: ansible
           command:
             - /usr/local/bin/ao-logs
             - /tmp/ansible-operator/runner
             - stdout
-          image: docker.io/alaypatel07/etcd-ansible-operator:sts
+          image: quay.io/alaypatel07/etcd-ha-operator:v0.6.0
           volumeMounts:
             - mountPath: /tmp/ansible-operator/runner
               name: runner
               readOnly: true
-        - name: etcd-ansible-operator
-          image: docker.io/alaypatel07/etcd-ansible-operator:sts
+        - name: etcd-ha-operator
+          image: quay.io/alaypatel07/etcd-ha-operator:v0.6.0
           ports:
           - containerPort: 60000
             name: metrics
@@ -40,7 +40,7 @@ spec:
               fieldRef:
                 fieldPath: metadata.name
           - name: OPERATOR_NAME
-            value: "etcd-ansible-operator"
+            value: "etcd-ha-operator"
           volumeMounts:
             - mountPath: /tmp/ansible-operator/runner
               name: runner

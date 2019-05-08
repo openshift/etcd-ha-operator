@@ -1,15 +1,15 @@
 ---
-- version: v1beta2
+- version: v1beta3
   group: etcd.database.coreos.com
   kind: EtcdCluster
   playbook: /opt/ansible/playbook.yaml
 
-- version: v1beta2
+- version: v1beta3
   group: etcd.database.coreos.com
   kind: EtcdRestore
   playbook: /opt/ansible/restore_playbook.yaml
 
-- version: v1beta2
+- version: v1beta3
   group: etcd.database.coreos.com
   kind: EtcdBackup
   playbook: /opt/ansible/backup_playbook.yaml

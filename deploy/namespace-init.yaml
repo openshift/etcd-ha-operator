@@ -74,7 +74,7 @@ spec:
       serviceAccountName: ansible-operator
       containers:
         - name: ansible-operator
-          image: docker.io/alaypatel07/etcd-ansible-operator:stable
+          image: docker.io/alaypatel07/etcd-ha-operator:stable
           ports:
           - containerPort: 60000
             name: metrics

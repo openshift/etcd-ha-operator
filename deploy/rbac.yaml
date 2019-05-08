@@ -1,7 +1,7 @@
 kind: ServiceAccount
 apiVersion: v1
 metadata:
-  name: etcd-ansible-operator
+  name: etcd-ha-operator
 
 ---
 kind: ClusterRole
@@ -43,7 +43,7 @@ metadata:
   name: default-account-app-operator
 subjects:
 - kind: ServiceAccount
-  name: etcd-ansible-operator
+  name: etcd-ha-operator
   namespace: default
 roleRef:
   kind: ClusterRole

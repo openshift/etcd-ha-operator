@@ -1,5 +1,5 @@
 ---
-# tasks file for etcd-ansible-operator
+# tasks file for etcd-ha-operator
 - block:
     - name: Set status when cluster is available
       vars:
@@ -10,7 +10,7 @@
         etcd_cluster_member_names: []
         size: ""
       k8s_status:
-        api_version: etcd.database.coreos.com/v1beta2
+        api_version: etcd.database.coreos.com/v1beta3
         kind: EtcdCluster
         name: "{{ etcd_cluster_name }}"
         namespace: "{{ etcd_namespace }}"

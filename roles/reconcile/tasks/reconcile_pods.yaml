@@ -29,7 +29,7 @@
     vars:
       etcd_status: "Creating"
     k8s_status:
-      api_version: etcd.database.coreos.com/v1beta2
+      api_version: etcd.database.coreos.com/v1beta3
       kind: EtcdCluster
       name: "{{ etcd_cluster_name }}"
       namespace: "{{ etcd_namespace }}"
@@ -104,7 +104,7 @@
   vars:
     etcd_status: Available
   k8s_status:
-    api_version: etcd.database.coreos.com/v1beta2
+    api_version: etcd.database.coreos.com/v1beta3
     kind: EtcdCluster
     name: "{{ etcd_cluster_name }}"
     namespace: "{{ etcd_namespace }}"
@@ -123,7 +123,7 @@
     vars:
       etcd_status: Scaling
     k8s_status:
-      api_version: etcd.database.coreos.com/v1beta2
+      api_version: etcd.database.coreos.com/v1beta3
       kind: EtcdCluster
       name: "{{ etcd_cluster_name }}"
       namespace: "{{ etcd_namespace }}"

@@ -3,7 +3,7 @@
 - name: Build Operator in Kubernetes docker container
   hosts: k8s
   vars:
-    image_name: etcd.database.coreos.com/etcd-ansible-operator:testing
+    image_name: etcd.database.coreos.com/etcd-ha-operator:testing
   tasks:
   # using command so we don't need to install any dependencies
   - name: Get existing image hash
@@ -23,7 +23,7 @@
     ansible_python_interpreter: '{{ ansible_playbook_python }}'
     deploy_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/deploy"
     pull_policy: Never
-    REPLACE_IMAGE: etcd.database.coreos.com/etcd-ansible-operator:testing
+    REPLACE_IMAGE: etcd.database.coreos.com/etcd-ha-operator:testing
     custom_resource: "{{ lookup('file', '/'.join([deploy_dir, 'cr.yaml'])) | from_yaml }}"
   tasks:
   - name: Delete the Operator Deployment
@@ -53,7 +53,7 @@
       namespace: '{{ namespace }}'
       definition: "{{ lookup('template', '/'.join([deploy_dir, 'test-operator.yaml'])) }}"
 
-  - name: Create the etcd.database.coreos.com/v1beta2.EtcdCluster
+  - name: Create the etcd.database.coreos.com/v1beta3.EtcdCluster
     k8s:
       state: present
       namespace: '{{ namespace }}'

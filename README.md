@@ -1,6 +1,8 @@
-## etcd-ansible-operator
+## etcd-ha-operator
 
 This project aims to provide a way to deploy etcd in High Availability mode.  It uses `statefulsets` to deploy etcd.
+
+`Note: This operator does not work alongside coreos/etcd-operator because its CRDs are compatible. In order to try this operator please make sure to deploy both the operators in namespaced mode and in different namespaces.`
 
 ### Pre-requisites for trying it out:
 
@@ -12,12 +14,12 @@ The stateful sets use persistent volumes, the cluster needs to be configured wit
 
 To follow this guide, make sure you are in the `default` namespace.
 
-1. Create RBAC `kubectl create -f https://raw.githubusercontent.com/water-hole/etcd-ansible-operator/master/deploy/rbac.yaml`
-2. Create CRD `kubectl create -f https://raw.githubusercontent.com/water-hole/etcd-ansible-operator/master/deploy/crd.yaml`
-3. Create EtcdRestore CRD `kubectl create -f https://raw.githubusercontent.com/water-hole/etcd-ansible-operator/master/deploy/restore_crd.yaml`
-4. Create EtcdBackup CRD `kubectl create -f https://raw.githubusercontent.com/water-hole/etcd-ansible-operator/master/deploy/backup_crd.yaml`
-5. Deploy the operator `kubectl create -f https://raw.githubusercontent.com/water-hole/etcd-ansible-operator/master/deploy/operator.yaml`
-6. Create an etcd cluster `kubectl create -f https://raw.githubusercontent.com/water-hole/etcd-ansible-operator/master/deploy/cr.yaml`
+1. Create RBAC `kubectl create -f https://raw.githubusercontent.com/openshift/etcd-ha-operator/master/deploy/rbac.yaml`
+2. Create CRD `kubectl create -f https://raw.githubusercontent.com/openshift/etcd-ha-operator/master/deploy/crd.yaml`
+3. Create EtcdRestore CRD `kubectl create -f https://raw.githubusercontent.com/openshift/etcd-ha-operator/master/deploy/restore_crd.yaml`
+4. Create EtcdBackup CRD `kubectl create -f https://raw.githubusercontent.com/openshift/etcd-ha-operator/master/deploy/backup_crd.yaml`
+5. Deploy the operator `kubectl create -f https://raw.githubusercontent.com/openshift/etcd-ha-operator/master/deploy/operator.yaml`
+6. Create an etcd cluster `kubectl create -f https://raw.githubusercontent.com/openshift/etcd-ha-operator/master/deploy/cr.yaml`
 7. Verify that cluster is up by `kubectl get pods -l app=etcd`. You should see something like this
 
     ```bash
@@ -84,7 +86,7 @@ $ kubectl create secret generic aws --from-file=$AWS_DIR/credentials --from-file
 Run the following commands to create the EtcdCluster CR, replacing `mybucket/etcd.backup` with the full path of the backup file:
 
 ```bash
-$ wget https://raw.githubusercontent.com/water-hole/etcd-ansible-operator/master/deploy/restore_cr.yaml
+$ wget https://raw.githubusercontent.com/openshift/etcd-ha-operator/master/deploy/restore_cr.yaml
 $ sed -e 's|<full-s3-path>|mybucket/etcd.backup|g' \
     -e 's|<aws-secret>|aws|g' \
     restore_cr.yaml \
@@ -118,7 +120,7 @@ Run the following commands to backup the EtcdCluster CR, replacing `mybucket/etc
 
 
 ```bash
-$ wget https://raw.githubusercontent.com/water-hole/etcd-ansible-operator/master/deploy/backup_cr.yaml
+$ wget https://raw.githubusercontent.com/openshift/etcd-ha-operator/master/deploy/backup_cr.yaml
 $ sed -e 's|<full-s3-path>|mybucket/etcd.backup|g' \
     -e 's|<aws-secret>|aws|g' \
     -e 's|<etcd-cluster-endpoints>|"http://<etcd-cluster-name>-client.<namespace>.svc.cluster.local:2379"|g' \

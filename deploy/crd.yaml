@@ -12,6 +12,6 @@ spec:
     - etcd
     singular: etcdcluster
   scope: Namespaced
-  version: v1beta2
+  version: v1beta3
   subresources:
     status: {}

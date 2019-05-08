@@ -6,16 +6,16 @@
   vars:
     ansible_python_interpreter: '{{ ansible_playbook_python }}'
     deploy_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/deploy"
-    image_name: etcd.database.coreos.com/etcd-ansible-operator:testing
+    image_name: etcd.database.coreos.com/etcd-ha-operator:testing
   tasks:
-  - name: Create the etcd.database.coreos.com/v1beta2.EtcdCluster
+  - name: Create the etcd.database.coreos.com/v1beta3.EtcdCluster
     k8s:
       namespace: '{{ namespace }}'
       definition: "{{ lookup('file', '/'.join([deploy_dir, 'cr.yaml'])) }}"
 
   - name: Get the newly created Custom Resource
     debug:
-      msg: "{{ lookup('k8s', group='etcd.database.coreos.com', api_version='v1beta2', kind='EtcdCluster', namespace=namespace, resource_name=cr.metadata.name) }}"
+      msg: "{{ lookup('k8s', group='etcd.database.coreos.com', api_version='v1beta3', kind='EtcdCluster', namespace=namespace, resource_name=cr.metadata.name) }}"
     vars:
       cr: "{{ lookup('file', '/'.join([deploy_dir, 'cr.yaml'])) | from_yaml }}"
 

@@ -5,7 +5,7 @@
     server_tls_secret: etcd_stateful_set[0].status.serverTLSSecret
     operator_tls_secret: etcd_stateful_set[0].status.operatorTLSSecret
   k8s_status:
-    api_version: etcd.database.coreos.com/v1beta2
+    api_version: etcd.database.coreos.com/v1beta3
     kind: EtcdCluster
     name: "{{ etcd_cluster_name }}"
     namespace: "{{ etcd_namespace }}"
@@ -43,7 +43,7 @@
     serverTLSSecret: _tls.static.member.server_secret
     operatorTLSSecret: _tls.static.operator_secret
   k8s_status:
-    api_version: etcd.database.coreos.com/v1beta2
+    api_version: etcd.database.coreos.com/v1beta3
     kind: EtcdCluster
     name: "{{ etcd_cluster_name }}"
     namespace: "{{ etcd_namespace }}"
