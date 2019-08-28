@@ -1,4 +1,4 @@
-FROM quay.io/operator-framework/ansible-operator:v0.6.0
+FROM quay.io/operator-framework/ansible-operator:v0.9.0
 USER root
 RUN pip install etcd3
 RUN pip install boto3

@@ -30,8 +30,9 @@ rules:
 - apiGroups:
   - apps
   resources:
-  - deployment
+  - deployments
   - statefulsets
+  - replicasets
   verbs:
   - "*"
 
