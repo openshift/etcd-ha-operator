@@ -35,7 +35,11 @@ rules:
   - replicasets
   verbs:
   - "*"
-
+- apiGroups: ["apps"]
+  resources:
+  - deployments/finalizers
+  verbs:
+  - update
 ---
 
 kind: ClusterRoleBinding
