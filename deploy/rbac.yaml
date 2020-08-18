@@ -38,6 +38,7 @@ rules:
 - apiGroups: ["apps"]
   resources:
   - deployments/finalizers
+  - services/finalizers
   verbs:
   - update
 ---
