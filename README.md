@@ -2,7 +2,7 @@
 
 This project aims to provide a way to deploy etcd in High Availability mode.  It uses `statefulsets` to deploy etcd.
 
-`Note: This operator does not work alongside coreos/etcd-operator because its CRDs are compatible. In order to try this operator please make sure to deploy both the operators in namespaced mode and in different namespaces.`
+`Note: This operator does not work alongside coreos/etcd-operator because its CRDs are the same. In order to try this operator please make sure to deploy both the operators in namespaced mode and in different namespaces.`
 
 ### Pre-requisites for trying it out:
 
