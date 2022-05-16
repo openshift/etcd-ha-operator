@@ -1,0 +1,17 @@
+domain: database.coreos.com
+layout: ansible.sdk.operatorframework.io/v1
+projectName: ibm-etcd-operator
+resources:
+- group: etcd
+  kind: EtcdCluster
+  version: v1beta3
+- group: etcd
+  kind: EtcdRestore
+  version: v1beta3
+- group: etcd
+  kind: EtcdBackup
+  version: v1beta3
+version: 3-alpha
+plugins:
+  manifests.sdk.operatorframework.io/v2: {}
+  scorecard.sdk.operatorframework.io/v2: {}

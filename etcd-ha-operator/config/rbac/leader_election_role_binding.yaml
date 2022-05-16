@@ -1,0 +1,11 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: etcd-ha-operator-leader-election-rb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: etcd-ha-operator-leader-election-role
+subjects:
+- kind: ServiceAccount
+  name: etcd-ha-operator-sa

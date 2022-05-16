@@ -1,0 +1,40 @@
+---
+# Use the 'create api' subcommand to add watches to this file.
+- version: v1beta3
+  group: etcd.database.coreos.com
+  kind: EtcdCluster
+  playbook: /opt/ansible/playbooks/playbook.yaml
+  snakeCaseParameters: false
+
+- version: v1beta3
+  group: etcd.database.coreos.com
+  kind: EtcdRestore
+  playbook: /opt/ansible/playbooks/restore_playbook.yaml
+  snakeCaseParameters: false 
+
+- version: v1beta3
+  group: etcd.database.coreos.com
+  kind: EtcdBackup
+  playbook: /opt/ansible/playbooks/backup_playbook.yaml
+  snakeCaseParameters: false
+
+# - version: v1beta3
+#   group: etcd.database.coreos.com
+#   kind: EtcdCluster
+#   playbook: playbooks/playbook.yaml
+#   maxRunnerArtifacts: 30
+#   snakeCaseParameters: false
+
+# - version: v1beta3
+#   group: etcd.database.coreos.com
+#   kind: EtcdRestore
+#   playbook: playbooks/restore_playbook.yaml
+#   snakeCaseParameters: false
+
+# - version: v1beta3
+#   group: etcd.database.coreos.com
+#   kind: EtcdBackup
+#   playbook: playbooks/backup_playbook.yaml
+#   snakeCaseParameters: false
+
+# +kubebuilder:scaffold:watch

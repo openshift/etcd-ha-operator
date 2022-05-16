@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ etcd_cluster_name }}-client
+  namespace: {{ etcd_namespace }}
+  labels:
+    app: {{ etcd_app_label }}
+    etcd_cluster: {{ etcd_cluster_name }}
+{% if not labels =={} %}
+    {{ labels | to_nice_yaml | indent(width=4) }}
+{% endif %}
+spec:
+  selector:
+    etcd_cluster: {{ etcd_cluster_name }}
+    app: {{ etcd_app_label }}
+  clusterIP: ""
+  ports:
+  - protocol: TCP
+    targetPort: {{ etcd_client_port }}
+    name: client
+    port: {{ etcd_client_port }}

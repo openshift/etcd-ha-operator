@@ -1,0 +1,6 @@
+                - name: WATCH_NAMESPACE
+                  valueFrom:
+                    configMapKeyRef:
+                      key: namespaces
+                      name: namespace-scope
+                      optional: true

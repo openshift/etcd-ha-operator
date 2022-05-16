@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ etcd_cluster_name }}
+  namespace: {{ etcd_namespace }}
+  labels:
+    app: {{ etcd_app_label }}
+    etcd_cluster: {{ etcd_cluster_name }}
+{% if not labels =={} %}
+    {{ labels | to_nice_yaml | indent(width=4) }}
+{% endif %}
+  annotations:
+    # Create endpoints also if the related pod isn't ready
+    # service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  selector:
+    etcd_cluster: {{ etcd_cluster_name }}
+    app: {{ etcd_app_label }}
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+  - protocol: TCP
+    targetPort: {{ etcd_client_port }}
+    name: client
+    port: {{ etcd_client_port}}
+  - protocol: TCP
+    targetPort: {{ etcd_peer_port }}
+    name: peer
+    port: {{ etcd_peer_port}}

@@ -1,0 +1,17 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: sample-etcd-ext-route
+  labels:
+    app: etcd
+    etcd_cluster: ibm-etcd-instance
+spec:
+  host: placeholder
+  to:
+    kind: Service
+    name: ibm-etcd-instance-client
+    weight: 100
+  port:
+    targetPort: client
+  tls:
+    termination: passthrough

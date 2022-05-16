@@ -1,0 +1,17 @@
+---
+
+- name: define variable for members.
+  set_fact:
+    etcd_pod_names: []
+    etcd_peer_urls: []
+    etcd_cluster_phase: "new"
+
+- name: create client service
+  k8s:
+    state: "present"
+    definition: "{{ lookup('template', 'service.yaml.j2') | from_yaml }}"
+
+- name: create peer_service
+  k8s:
+    state: "present"
+    definition: "{{ lookup('template', 'headless-service.yaml.j2') | from_yaml }}"

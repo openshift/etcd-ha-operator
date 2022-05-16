@@ -1,0 +1,119 @@
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   labels:
+#     control-plane: controller-manager
+#   name: system
+# ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: etcd-ha-operator
+  labels:
+    control-plane: controller-manager
+    name: etcd-ha-operator
+    app.kubernetes.io/instance: etcd-ha-operator
+    app.kubernetes.io/managed-by: etcd-ha-operator
+    app.kubernetes.io/name: etcd-ha-operator
+  annotations:
+    "ansible.operator-sdk/verbosity": "4"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      control-plane: controller-manager
+      name: etcd-ha-operator
+      app.kubernetes.io/instance: etcd-ha-operator
+      app.kubernetes.io/managed-by: etcd-ha-operator
+      app.kubernetes.io/name: etcd-ha-operator
+  template:
+    metadata:
+      labels:
+        control-plane: controller-manager
+        name: etcd-ha-operator
+        app.kubernetes.io/instance: etcd-ha-operator
+        app.kubernetes.io/managed-by: etcd-ha-operator
+        app.kubernetes.io/name: etcd-ha-operator
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: beta.kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 3
+              preference:
+                matchExpressions:
+                  - key: beta.kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
+      serviceAccountName: etcd-ha-operator
+      hostNetwork: false
+      hostPID: false
+      hostIPC: false
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: manager
+          image: controller
+          #image: quay.io/hariibm92/etcd:3.4.16
+          args:
+            - "--enable-leader-election"
+            - "--leader-election-id=etcd-ha-operator"
+            - "--ansible-verbosity=4"
+          securityContext:
+            privileged: false
+            readOnlyRootFilesystem: false
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 600m
+              memory: 600Mi
+          ports:
+          - containerPort: 60000
+            name: metrics
+          imagePullPolicy: Always
+          livenessProbe:
+            httpGet:
+              path: /readyz
+              port: 6789
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 6789
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          env:
+          - name: ANSIBLE_DEBUG_LOGS
+            value: "True"
+          - name: WATCH_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          # - name: ANSIBLE_GATHERING
+          #   value: explicit
+          volumeMounts:
+            - mountPath: /tmp/ansible-operator/runner
+              name: runner
+      volumes:
+        - name: runner
+          emptyDir: {}
+      terminationGracePeriodSeconds: 10

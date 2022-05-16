@@ -1,0 +1,58 @@
+apiVersion: "etcd.database.coreos.com/v1beta3"
+kind: "EtcdCluster"
+metadata:
+  name: "example-etcd-cluster"
+  labels:
+    app.kubernetes.io/instance: example-etcd-cluster
+    app.kubernetes.io/managed-by: etcd-ha-operator
+    app.kubernetes.io/name: etcd
+spec:
+  image: "quay.io/hariibm92/etcd:3.4.16"
+  imagePullSecret: ""
+  storageSize: "2Gi"
+  storageClass: "" #ocs-storagecluster-ceph-rbd" 
+  size: 3
+  networkPolicy:
+    enable: true
+  etcdResources:
+    requests:
+      cpu: "100m"
+      memory: "100Mi"
+    limits:
+      cpu: "200m"
+      memory: "200Mi"
+  enableAuth: true
+  authSecretName: ""
+  labels:
+    app.kubernetes.io/instance: example-etcd-cluster
+    app.kubernetes.io/managed-by: etcd-ha-operator
+    app.kubernetes.io/name: etcd
+    app.kubernetes.io/example-label: etcd-value1
+  podAnnotations:
+    app.kubernetes.io/example-annotation: etcd-value2
+  affinity:
+  #   podAntiAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #       - labelSelector:
+  #           matchExpressions:
+  #             - key: app.kubernetes.io/example-label
+  #               operator: In
+  #               values:
+  #                   - etcd-value1
+  #         topologyKey: "kubernetes.io/hostname"
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: kubernetes.io/arch
+                  operator: In
+                  values:
+                    - amd64
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 3
+            preference:
+              matchExpressions:
+                - key: kubernetes.io/arch
+                  operator: In
+                  values:
+                    - amd64

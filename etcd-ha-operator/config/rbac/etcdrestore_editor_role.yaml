@@ -1,0 +1,24 @@
+# permissions for end users to edit etcdrestores.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: etcdrestore-editor-role
+rules:
+- apiGroups:
+  - etcd.database.coreos.com
+  resources:
+  - etcdrestores
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - etcd.database.coreos.com
+  resources:
+  - etcdrestores/status
+  verbs:
+  - get

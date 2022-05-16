@@ -1,0 +1,92 @@
+---
+# tasks file for etcd-ha-operator
+- block:
+  - name: Get Etcd Instance Status
+    k8s_info:
+      kind: EtcdCluster
+      api_version: etcd.database.coreos.com/v1beta3
+      namespace: "{{ etcd_namespace }}"
+      name: "{{ etcd_cluster_name }}"
+    register: etcd_instance
+
+  - name: Get Authentication Status
+    set_fact:
+      authentication: "{{ etcd_instance.resources[0].status.authentication }}"
+
+  - name: Set status when cluster is available
+    vars:
+      etcd_status: Unknown
+      control_paused: true
+      image: ""
+      etcd_cluster_members: []
+      etcd_cluster_member_names: []
+      size: ""
+      storage_class: ""
+    k8s_status:
+      api_version: etcd.database.coreos.com/v1beta3
+      kind: EtcdCluster 
+      name: "{{ etcd_cluster_name }}"
+      namespace: "{{ etcd_namespace }}"
+      status: "{{ lookup('template', 'status.yaml') | from_yaml }}"
+
+  - name: "end play if nothing spec.pause is true"
+    debug:
+      msg: "skipping reconciliation"
+
+  - meta: end_play
+
+  when: pause is defined and pause == true
+
+- name: Call backup task if it is for backup
+  include_tasks: backup_s3.yaml
+  when: backup_s3 is defined
+
+- name: Generate auth secret
+  include_tasks: generate_auth_secret.yaml
+  when: ((auth_secret_name is not defined) or
+        (auth_secret_name | trim | length == 0)) and  
+        execute_enable_authentication
+
+- name: Check if auth secret exists
+  k8s_info:
+    api_version: v1
+    kind: Secret
+    name: '{{ auth_secret_name_to_bound }}'
+    namespace: '{{ etcd_namespace }}'
+  register: authSecretContent
+  ignore_errors: true
+  when: execute_enable_authentication
+
+- name: Get values from auth secret
+  set_fact:
+    auth_password: "{{ authSecretContent.resources[0].data['password'] | b64decode }}"
+  when: execute_enable_authentication and authSecretContent is defined and (authSecretContent.resources | length > 0)
+  no_log: true
+
+- name: Determine if secure client
+  set_fact:
+    etcd_secure_client: "present"
+  when: (_tls is not undefined and _tls.static is not undefined and _tls.static.operator_secret is not undefined
+                                    and _tls.static.operator_secret|length > 0 )
+
+- name: Determine if secure peer
+  set_fact:
+    etcd_secure_peer: "present"
+  when: ( _tls is not undefined and _tls.static is not undefined and _tls.static.member is not undefined
+        and _tls.static.member.peer_secret|length > 0)
+
+- name: call create certs on secure client
+  vars:
+    tls_secret_name: "{{ _tls.static.operator_secret }}"
+  include_tasks: create_certs.yaml
+  when: etcd_secure_client == "present"
+
+- name: create services if it does not exist
+  include_tasks: create_services.yml
+  when: (etcd_cluster_services|length==0)
+
+- name: reconcile pods
+  include_tasks: reconcile_pods.yaml
+
+- name: reconcile networkpolicy
+  include_tasks: reconcile_networkpolicy.yaml

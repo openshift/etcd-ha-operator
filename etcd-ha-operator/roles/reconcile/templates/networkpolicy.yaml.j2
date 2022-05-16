@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ etcd_cluster_name }}
+  namespace: {{ etcd_namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      etcd_cluster: {{ etcd_cluster_name }}
+      app: {{ etcd_app_label }}
+  policyTypes:
+  - Ingress
+  ingress:
+  - ports:
+    - protocol: TCP
+      port: {{ etcd_client_port }}
+    - protocol: TCP
+      port: {{ etcd_peer_port}}

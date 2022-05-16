@@ -1,0 +1,21 @@
+---
+- name: Check if network policy exists
+  k8s_info:
+    api_version: v1
+    kind: NetworkPolicy
+    name: '{{ etcd_cluster_name }}'
+    namespace: '{{ etcd_namespace }}'
+  register: networkpolicy_existing_status
+  ignore_errors: true
+
+- name: Create Network Policy
+  k8s:
+    state: "present"
+    definition: "{{ lookup('template', 'networkpolicy.yaml.j2') | from_yaml }}"
+  when: (networkpolicy_existing_status.resources | length == 0) and networkPolicy.enable
+
+- name: Delete Network Policy
+  k8s:
+    state: "absent"
+    definition: "{{ lookup('template', 'networkpolicy.yaml.j2') | from_yaml }}"
+  when: (networkpolicy_existing_status.resources | length != 0) and (not networkPolicy.enable)

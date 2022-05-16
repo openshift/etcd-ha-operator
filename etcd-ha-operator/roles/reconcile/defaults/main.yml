@@ -1,0 +1,94 @@
+---
+# defaults file for etcd-ha-operator
+#### Mapping variables from camelCase to snake_case
+image_pull_secret: "{{ imagePullSecret | default('') }}"
+enable_auth: "{{ enableAuth | default(true)}}"
+auth_secret_name: "{{authSecretName | default('') }}"
+etcd_namespace: "{{ ansible_operator_meta.namespace }}"
+etcd_cluster_name: "{{ ansible_operator_meta.name }}"
+_tls:
+  enable_client_cert_auth: "{{TLS.enableClientCertAuth | default(false) }}"
+  static:
+    member:
+      peer_secret : "{{TLS.static.member.peerSecret | default('') }}"
+      server_secret: "{{TLS.static.member.serverSecret | default('') }}"
+    operator_secret: "{{TLS.static.operatorSecret | default('') }}"
+storage_size: "{{storageSize}}"
+storage_class: "{{storageClass | default('') }}"
+pod_annotations: "{{podAnnotations | default({}) }}"
+node_selector: "{{nodeSelector | default({}) }}"
+#######
+#image: "{{ 'quay.io/coreos/etcd:v' + version | string }}"
+image: ""
+labels: {}
+affinity: {}
+networkPolicy:
+  enable: true
+etcdResources:
+  requests:
+    cpu:  "200m"
+    memory: "200Mi"
+  limits:
+    cpu:  "200m"
+    memory: "200Mi"
+etcdLivenessProbe:
+  failureThreshold: 3
+  initialDelaySeconds: 100
+  periodSeconds: 5
+  successThreshold: 1
+  timeoutSeconds: 5
+etcdReadinessProbe:
+  failureThreshold: 3
+  initialDelaySeconds: 3
+  periodSeconds: 5
+  successThreshold: 1
+  timeoutSeconds: 5
+etcd_client_port: 2379
+etcd_peer_port: 2380
+etcd_app_label: "etcd"
+etcd_volume_mounts:
+- name: "etcd-data"
+  mountPath: "/var/etcd"
+etcd_volumes:
+- name: "etcd-data"
+  source:
+    emptyDir: {}
+
+etcd_cluster_services: "{{ q('k8s', api_version='v1', kind='Service', namespace=etcd_namespace,
+                             label_selector='etcd_cluster='+ etcd_cluster_name + ',app=' + etcd_app_label) }}"
+
+etcd_cluster_pods: "{{ q('k8s', api_version='v1', kind='Pod', namespace=etcd_namespace,
+                                               label_selector='etcd_cluster='+ etcd_cluster_name + ',app=' + etcd_app_label) }}"
+
+etcd_stateful_set: "{{ q('k8s', api_version='apps/v1', kind='StatefulSet', namespace=etcd_namespace, resource_name=etcd_cluster_name) }}"
+enable_client_cert_auth: "{{ _tls.enable_client_cert_auth | lower }}"
+etcd_new_members: []
+etcd_remove_members: []
+etcd_peer_urls: []
+etcd_new_peer_urls: []
+etcd_cluster_phase: "new"
+etcd_peer_protocol: "http://"
+etcd_client_protocol: "http://"
+etcd_peer_tls_dir: "/etc/etcdtls/member/peer-tls"
+etcd_server_tls_dir: "/etc/etcdtls/member/server-tls"
+etcd_peer_tls_commands: []
+etcd_client_tls_commands: []
+execute_enable_authentication: "{{ enable_auth }}"
+auth_secret_name_to_bound:  "{{auth_secret_name}}"
+authentication: "NotEnabled"
+etcd_member_size: 0
+etcd_cluster_members: []
+etcd_secure_client: "absent"
+etcd_secure_peer: "absent"
+etcd_remove_pods: []
+etcd_valid_member_ids: []
+etcd_cluster_member_names: []
+auth_username: "root"
+auth_password: "admin"
+#etcd_endpoints: http://192.168.39.245:32379
+#storage_type: S3
+#s3:
+#  # The format of "path" must be: "<s3-bucket-name>/<path-to-backup-file>"
+#  # e.g: "mybucket/etcd.backup"
+#  path: alay-etcd-backup/trial1
+#  aws_secret: aws

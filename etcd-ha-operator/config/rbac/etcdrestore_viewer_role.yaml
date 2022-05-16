@@ -1,0 +1,20 @@
+# permissions for end users to view etcdrestores.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: etcdrestore-viewer-role
+rules:
+- apiGroups:
+  - etcd.database.coreos.com
+  resources:
+  - etcdrestores
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - etcd.database.coreos.com
+  resources:
+  - etcdrestores/status
+  verbs:
+  - get

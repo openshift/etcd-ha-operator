@@ -1,0 +1,16 @@
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: etcd-ha-operator-rb
+  labels:
+    app.kubernetes.io/instance: etcd-ha-operator
+    app.kubernetes.io/managed-by: etcd-ha-operator
+    app.kubernetes.io/name: etcd-ha-operator
+subjects:
+- kind: ServiceAccount
+  name: etcd-ha-operator-sa
+roleRef:
+  kind: Role
+  name:  etcd-ha-operator-role
+  apiGroup: rbac.authorization.k8s.io
